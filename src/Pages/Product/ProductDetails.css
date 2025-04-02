@@ -1,0 +1,93 @@
+#ProductGrid
+{
+    min-height: calc(100vh - 4rem);
+    padding: .5rem;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem,1fr));
+    gap: .8rem;
+}
+
+.ProductCard
+{
+    height: 600px;
+    background-color: rgb(231, 237, 239);
+    color: rgb(31, 31, 31);
+    position: relative;
+
+    border-radius: 11px;
+    overflow: hidden;
+    box-shadow: 0px .3rem 1px lightgray;
+}
+
+.ProductCard img
+{
+    width: 100%;
+    height: 60%;
+    object-fit: cover;
+}
+
+.ProductCard h3
+{
+    margin-top: .5rem;
+    margin-left: .5rem;
+    font-size: 1rem;
+}
+
+.ProductCard p
+{
+    margin-left: .5rem;
+    font-size: .75rem;
+    color: rgb(136, 136, 136);
+    line-height: 1.5;
+}
+.ProductCard p:last-of-type
+{
+ 
+    color: rgb(16, 16, 16);
+    font-weight: bold;
+}
+
+.Btns
+{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+    gap: 1rem;
+    position: absolute;
+    bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Btns button:first-of-type
+{
+    background-color: rgb(33, 33, 33);
+    color: rgb(240, 238, 238);
+    border: none;
+    padding: .4rem 1.6rem;
+    border-radius: 11px;
+    cursor: pointer;
+    transition: background-color.2s ease-in-out;
+}
+.Btns button:first-of-type:active
+{
+    background-color: rgb(161, 161, 161);
+
+
+}
+
+.Btns button:last-of-type
+{
+    background-color: rgb(136, 136, 136);
+    color: white;
+    border: none;
+    padding: .4rem 1.6rem;
+    border-radius: 11px;
+    cursor: pointer;
+    transition: background-color.2s ease-in-out;
+}
+

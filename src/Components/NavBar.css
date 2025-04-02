@@ -1,0 +1,40 @@
+nav
+{
+    background-color: black;
+    color: white;
+    position: sticky;
+    top: -6px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .7rem 1rem;
+    height: 4rem;
+}
+
+nav h2
+{
+    font-size: 1.5rem;
+    margin-left: 1rem;
+    transition: color.2s ease-in-out;
+    cursor: pointer;
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+nav ul
+{
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: .75rem;
+}
+
+a
+{
+    color: white;
+    text-decoration: none;
+    transition: color.2s ease-in-out;
+}
