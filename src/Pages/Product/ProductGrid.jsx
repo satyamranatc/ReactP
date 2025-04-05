@@ -1,73 +1,117 @@
-import React,{useState,useEffect} from 'react'
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-const API_BASE_URL = import.meta.env.VITE_API_URL;
-import "./ProductDetails.css"
 import { useDispatch } from 'react-redux';
 
-import {addToCart} from "../../ReduxSlicer/ProductSlicer"
-
+import "./ProductDetails.css";
+import { HeartIcon } from 'lucide-react';
+import ProductCard from './ProductCard.jsx';
 
 export default function ProductGrid() {
-  let dispatch = useDispatch()
-    let [ProductData,setProductData] = useState();
-    let [CtegoriesData,setCtegoriesData] = useState([]);
-    let [isLoading,setLoading] = useState(true);
-    useEffect(()=>{
-        axios.get(`${API_BASE_URL}`)
-       .then(res=>{
-           setProductData(res.data)
-           let c = res.data.map((e)=>e.category.name)
-           let uniqueCtegories = [...new Set(c)]
-           setCtegoriesData(uniqueCtegories)      
-           console.log(uniqueCtegories);  
-       })
-       .catch(err=>console.log(err))
-       setLoading(false)
-    },[])
+  const dispatch = useDispatch();
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+  
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+  
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}`);
+      setProducts(response.data);
+      
+      // Extract unique categories
+      const categoryList = response.data.map(product => product.category.name);
+      const uniqueCategories = [...new Set(categoryList)];
+      setCategories(uniqueCategories);
+      
+      setIsLoading(false);
+    } catch (err) {
+      console.error("Error fetching products:", err);
+      setError("Failed to load products. Please try again later.");
+      setIsLoading(false);
+    }
+  };
 
-   
+  const filteredProducts = products?.filter(product => {
+    const matchesCategory = activeCategory === 'all' || product.category.name === activeCategory;
+    const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          product.description.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+
+  const handleCategoryChange = (category) => {
+    setActiveCategory(category);
+  };
+
+  if (error) {
+    return <div className="error-container">{error}</div>;
+  }
 
   return (
-    <div id = "ProductGrid">
-        {
-          isLoading? <div>
-            <center>
-              <div className="spinner-border text-primary" role="status">
-                <span className="sr-only">Loading...</span>
-              </div>
-            </center>
-          </div>:
-            <div>
-              <section>
-                <h2>Categories</h2>
+    <div className="product-grid-container">
+      {isLoading ? (
+        <div className="loading-container">
+          <div className="spinner-border text-primary" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="product-header">
+            <h1>Our Products</h1>
+            <div className="search-bar">
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
 
-                  {CtegoriesData?.map((category,index)=>(
-                   <button className='bg-blue-300 py-2 rounded rounded-4xl px-5 m-3' >{category}</button>
-                  ))}
+          <section className="categories-section">
+            <h2>Categories</h2>
+            <div className="category-buttons">
+              <button 
+                className={`category-btn ${activeCategory === 'all' ? 'active' : ''}`}
+                onClick={() => handleCategoryChange('all')}
+              >
+                All Products
+              </button>
+              {categories.map((category, index) => (
+                <button
+                  key={index}
+                  className={`category-btn ${activeCategory === category ? 'active' : ''}`}
+                  onClick={() => handleCategoryChange(category)}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </section>
 
-              </section>
-
-          {
-                ProductData?.map(product=>(
-           
-                  <div className='ProductCard'  key={product.id}>
-                      <img src={product.images[0]} alt={product.name} />
-                      <h3>{product.title}</h3>
-                      <p>{product.description}</p>
-                      <p>Price: ${product.price}</p>
-                      <div className="Btns">
-                      <button onClick={()=>{
-                        dispatch(addToCart(product))
-                      }} >Add To Cart</button>
-                      <button>Buy Now</button>
-                      </div>
-                  </div>
-              ))
-            }
-              </div>
-      }
-    
+          {filteredProducts?.length === 0 ? (
+            <div className="no-products">
+              <p>No products found matching your criteria.</p>
+            </div>
+          ) : (
+            <div className="products-grid">
+              {filteredProducts?.map(product => (
+                <ProductCard key={product.id} product ={ product}/>
+                
+              ))}
+            </div>
+          )}
+        </>
+      )}
     </div>
-
-  )
+  );
 }
